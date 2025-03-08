@@ -2,7 +2,10 @@ name: Build and Publish Docker Image
 
 on:
   push:
-    branches: [main, dev, feat/building]
+    branches:
+      - main
+      - dev
+      - feat/building
 
 jobs:
   build:
@@ -16,10 +19,21 @@ jobs:
 
       - name: Determine image tag based on branch
         run: |
-          if [[ "${GITHUB_REF}" == "refs/heads/dev" ]]; then
-            echo "IMAGE_TAG=dev" >> $GITHUB_ENV
+          BRANCH=${GITHUB_REF##*/}
+          if [ "$BRANCH" = "main" ]; then
+            if [ -f VERSION ]; then
+              VERSION=$(cat VERSION)
+              echo "IMAGE_TAG=$VERSION" >> $GITHUB_ENV
+              echo "Using version tag: $VERSION"
+            else
+              echo "VERSION file not found, using latest"
+              echo "IMAGE_TAG=latest" >> $GITHUB_ENV
+              echo "Using version tag: latest"
+            fi
           else
-            echo "IMAGE_TAG=latest" >> $GITHUB_ENV
+            IMAGE_TAG=$(echo "$BRANCH" | tr '[:upper:]' '[:lower:]')
+            echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
+            echo "Using branch tag: $IMAGE_TAG"
           fi
 
       - name: Log in to GitHub Container Registry
