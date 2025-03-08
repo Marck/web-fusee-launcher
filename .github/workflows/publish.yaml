@@ -48,4 +48,5 @@ jobs:
         with:
           context: .
           push: true
+          platforms: linux/amd64,linux/arm64
           tags: ghcr.io/${{ env.REPO_OWNER_LC }}/web-fusee-launcher:${{ env.IMAGE_TAG }}
