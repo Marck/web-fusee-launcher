@@ -2,7 +2,7 @@ name: Build and Publish Docker Image
 
 on:
   push:
-    branches: [feat/building]
+    branches: [main, dev]
 
 jobs:
   build:
@@ -10,6 +10,17 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
+      - name: Convert repository owner to lowercase
+        run: echo "REPO_OWNER_LC=${GITHUB_REPOSITORY_OWNER,,}" >> $GITHUB_ENV
+
+      - name: Determine image tag based on branch
+        run: |
+          if [[ "${GITHUB_REF}" == "refs/heads/dev" ]]; then
+            echo "IMAGE_TAG=dev" >> $GITHUB_ENV
+          else
+            echo "IMAGE_TAG=latest" >> $GITHUB_ENV
+          fi
 
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v2
@@ -23,4 +34,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/web-fusee-launcher:latest
+          tags: ghcr.io/${{ env.REPO_OWNER_LC }}/web-fusee-launcher:${{ env.IMAGE_TAG }}
