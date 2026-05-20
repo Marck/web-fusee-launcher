@@ -6,3 +6,9 @@ This is a port of [fusee-launcher](https://github.com/reswitched/fusee-launcher)
 
 # Try it out
 Either use a web server to host the files (must be on https!) or you can try the [demo](https://atlas44.s3-us-west-2.amazonaws.com/web-fusee-launcher/index.html).
+
+# Updating heketa.bin
+When updating to a new hekate.bin version, place the `hekate.bin` (with this exact name) in the same folder as the `bin-to-js.js` file and then run the following command:
+```bash
+node bin-to-js.js
+```
